@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATA_BASE_URL = os.getenv("DATABASE_URL", "sqlite:///./agendamentos.db")
+DATA_BASE_URL = os.getenv("DATABASE_URL", "sqlite:///./clinic_scheduler.db")
 
 if DATA_BASE_URL.startswith("sqlite"):
     engine = create_engine(DATA_BASE_URL, connect_args={"check_same_thread": False})

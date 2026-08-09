@@ -1,21 +1,22 @@
 # pyrefly: ignore [missing-import]
 from sqlalchemy import Column, Integer, String, Enum
 # pyrefly: ignore [missing-import]
-from sqlalchemy.orm import  relationship
+from sqlalchemy.orm import relationship
 from app.database.session import Base
 import enum
 
 class UserRole(enum.Enum):
-    PACIENTE = "paciente"
-    NUTRICIONISTA = "nutricionista"
+    PATIENT = "patient"
+    NUTRITIONIST = "nutritionist"
     ADMIN = "admin"
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    senha_hash = Column(String)
-    tipo_usuario = Column(Enum(UserRole))
-    nutricionista = relationship("Nutricionista", back_populates="usuario", uselist=False)
-    paciente = relationship("Paciente", back_populates="usuario", uselist=False)
+    password_hash = Column(String)
+    role = Column(Enum(UserRole))
+    
+    nutritionist = relationship("Nutritionist", back_populates="user", uselist=False)
+    patient = relationship("Patient", back_populates="user", uselist=False)

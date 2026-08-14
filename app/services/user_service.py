@@ -16,7 +16,7 @@ class UserService:
     def get_password_hash(self, password: str) -> str:
         return pwd_context.hash(password)
     
-    def crete_user(self, db: Session, user: UserCreate):
+    def create_user(self, db: Session, user: UserCreate):
 
         usuario_existente = self.repository.get_by_email(
             db=db, email=user.email
@@ -25,8 +25,7 @@ class UserService:
         if usuario_existente:
             raise HTTPException(status_code=400, detail="Email já cadastrado")
         else:
-            self.get_password_hash(user.password)
-            hash_gerado = ""
+            hash_gerado = self.get_password_hash(user.password)
 
         novo_usuario = self.repository.create(db=db, user_create=user,
         password_hash=hash_gerado)

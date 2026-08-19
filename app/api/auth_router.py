@@ -1,4 +1,4 @@
-from app.schemas.login import TokenResponde, LoginRequest
+from app.schemas.login import TokenResponse, LoginRequest
 from fastapi import APIRouter, Depends
 from app.services.user_service import UserService
 # pyrefly: ignore [missing-import]
@@ -8,7 +8,7 @@ from app.database.session import get_db
 router = APIRouter()
 
 @router.post("/",
- response_model=TokenResponde)
+ response_model=TokenResponse)
 def login(dados_usuario: LoginRequest,
  db: Session = Depends(get_db)):
     user_service = UserService()

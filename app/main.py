@@ -6,4 +6,4 @@ import app.models
 app = FastAPI()
 
 app.include_router(user_router, prefix="/users", tags=["Users"])
-app.include_router(auth_router, prefix="/login", tags=["Login"])
+app.include_router(auth_router, prefix="/login", tags=["Auth"])

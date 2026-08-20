@@ -1,18 +1,21 @@
 from app.database.session import get_db
 from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.security import SECRET_KEY, ALGORITHM
 from app.repositories.user_repository import UserRepository
 # pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+security = HTTPBearer()
+
 repository = UserRepository()
 
-def get_current_user(token: str = Depends(oauth2_scheme),
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security),
  db: Session = Depends(get_db),
  ):
+
+    token = credentials.credentials
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

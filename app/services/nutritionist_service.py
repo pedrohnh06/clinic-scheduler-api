@@ -15,9 +15,9 @@ class NutritionistService:
         self.nutritionist_repository = NutritionistRepository()
 
     def create_nutritionist(self,
-     db: Session,
-      nutritionist: NutritionistCreate):
-      
+    db: Session,
+    nutritionist: NutritionistCreate
+    ):
     
         existing_user = self.user_repository.get_by_email(db=db, email=nutritionist.email)
         if existing_user:

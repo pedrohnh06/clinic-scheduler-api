@@ -13,7 +13,7 @@ class Appointment(Base):
     __tablename__ = "appointments"
 
     id = Column(Integer, primary_key=True, index=True)
-    start_time = Column(DateTime)
+    start_time = Column(DateTime(timezone=True), nullable=False)
     nutritionist_id = Column(Integer, ForeignKey("nutritionists.id"))
     patient_id = Column(Integer, ForeignKey("patients.id"), nullable=True)
     status = Column(Enum(AppointmentStatus))

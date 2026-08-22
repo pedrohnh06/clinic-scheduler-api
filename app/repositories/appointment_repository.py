@@ -41,3 +41,7 @@ class AppointmentRepository:
                 ).first()
             
         return existing_schedule
+    
+    def get_all(self, db: Session):
+
+        return db.query(Appointment).all()

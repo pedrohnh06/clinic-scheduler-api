@@ -37,3 +37,12 @@ class AppointmentService:
                 )
             
             return new_appointment
+
+    def get_all_appointment(
+        self,
+        db: Session
+    ):
+
+        search = self.appointment_repository.get_all(db)
+
+        return search

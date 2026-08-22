@@ -5,8 +5,6 @@ from app.schemas.appointment import AppointmentCreate, AppointmentResponse
 # pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_user
-from app.models.appointment import Appointment
-
 router = APIRouter()
 
 @router.post("/", response_model = AppointmentResponse)
@@ -19,3 +17,10 @@ def create_appointment(
     new_appointment = appointment_service.create_appoint(db=db, appointment=data)
 
     return new_appointment
+
+@router.get("/", response_model = list[AppointmentResponse])
+def appointment_get_all(db: Session = Depends(get_db),
+logged_user = Depends(get_current_user)):
+    appointment_service = AppointmentService()
+    appointment_get = appointment_service.get_all_appointment(db=db)
+    return appointment_get

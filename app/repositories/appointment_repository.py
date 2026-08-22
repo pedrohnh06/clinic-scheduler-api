@@ -45,3 +45,40 @@ class AppointmentRepository:
     def get_all(self, db: Session):
 
         return db.query(Appointment).all()
+
+    def get_by_id(
+        self,
+        db: Session,
+        appointment_id: int
+    ):
+
+        search_appointment = db.query(
+            Appointment
+            ).filter(
+                appointment_id == Appointment.id,
+                ).first()
+            
+        return search_appointment
+    
+    def update(
+        self,
+        db: Session,
+        appointment: Appointment,
+        update_data: dict
+    ):
+        for key, value in update_data.items():
+            if value is not None:
+                setattr(appointment, key, value)
+        db.commit()
+        db.refresh(appointment)
+
+        return appointment
+
+    def delete(
+        self,
+        db: Session,
+        appointment: Appointment
+    ):
+
+        db.delete(appointment)
+        db.commit()

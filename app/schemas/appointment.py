@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 from app.models.appointment import AppointmentStatus
@@ -16,3 +17,9 @@ class AppointmentResponse(BaseModel):
     id: int
     class Config:
         from_attributes = True
+
+class AppointmentUpdate(BaseModel):
+    start_time: Optional[datetime] = None
+    patient_id: Optional[int] = None
+    nutritionist_id: Optional[int] = None
+    status: Optional[AppointmentStatus] = None

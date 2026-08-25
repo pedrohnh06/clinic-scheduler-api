@@ -1,6 +1,6 @@
 # pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
-from app.schemas.nutritionist import NutritionistCreate
+from app.schemas.nutritionist import NutritionistCreate, NutritionistUpdate
 from app.schemas.user import UserCreate
 from app.repositories.nutritionist_repository import NutritionistRepository
 from app.repositories.user_repository import UserRepository
@@ -46,3 +46,43 @@ class NutritionistService:
         )
 
         return new_nutritionist
+    
+    def get_all_nutritionists(self,
+    db: Session):
+
+        search = self.nutritionist_repository.get_all(db=db)
+
+        return search
+    
+    def get_by_id(self,
+    db: Session,
+    nutritionist_id: int):
+
+        search = self.nutritionist_repository.get_by_id(db=db, nutritionist_id=nutritionist_id)
+        if search is None:
+            raise HTTPException(status_code=404, detail="Nutricionista não encontrado")
+        else:
+            return search
+    
+    def update(self,
+    db: Session,
+    id: int,
+    nutritionist: NutritionistUpdate):
+
+        existing_nutritionist = self.nutritionist_repository.get_by_id(db=db, nutritionist_id=id)
+        if existing_nutritionist is None:
+            raise HTTPException(status_code=404, detail="Nutricionista não encontrado")
+        else: 
+            update_data = nutritionist.model_dump(exclude_unset=True)
+            update_nutritionist = self.nutritionist_repository.update(db=db, nutritionist=existing_nutritionist, update_data=update_data)
+
+            return update_nutritionist
+    
+    def delete(self,
+    db: Session,
+    id: int):
+
+        existing_nutritionist = self.nutritionist_repository.get_by_id(db=db, nutritionist_id=id)
+        if existing_nutritionist is None:
+            raise HTTPException(status_code=404, detail="Nutricionista não encontrado")
+        self.nutritionist_repository.delete(db=db, nutritionist=existing_nutritionist)

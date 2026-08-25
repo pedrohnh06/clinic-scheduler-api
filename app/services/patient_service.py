@@ -1,6 +1,6 @@
 # pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
-from app.schemas.patient import PatientCreate
+from app.schemas.patient import PatientCreate, PatientUpdate
 from app.schemas.user import UserCreate
 from app.repositories.patient_repository import PatientRepository
 from app.repositories.user_repository import UserRepository
@@ -41,6 +41,57 @@ class PatientService:
         user_id=new_user.id)
 
         return new_patient
+    
+    def get_all_patients(
+        self,
+        db: Session,
+    ):
+        patient_repository = PatientRepository()
+        get_all_patients = patient_repository.get_all(db=db)
 
+        return get_all_patients
+    
+    def get_by_id_patient(
+        self,
+        db: Session,
+        patient_id: int
+    ):
+        search = self.patient_repository.get_by_id(patient_id=patient_id, db=db)
+        if search is None:
+            raise HTTPException(status_code=404, detail="Paciente não encontrado")
+        else:
+            return search
+    
+    def update_patient(
+        self,
+        db: Session,
+        patient_id: int,
+        patient: PatientUpdate
+    ):
+
+        existing_patient = self.patient_repository.get_by_id(patient_id=patient_id, db=db)
+        if existing_patient is None:
+            raise HTTPException(status_code=404, detail="Paciente não encontrado")
+        else:
+            update_data = patient.model_dump(exclude_unset=True)
+            update_patient = self.patient_repository.update_patient(
+                db=db,
+                patient=existing_patient,
+                update_data=update_data
+            )
+
+            return update_patient
+    
+    def delete_patient(
+        self,
+        db: Session,
+        patient_id: int
+    ):
+
+        existing_patient = self.patient_repository.get_by_id(patient_id=patient_id, db=db)
+        if existing_patient is None:
+            raise HTTPException(status_code=404, detail="Paciente não encontrado")
+        else:
+            self.patient_repository.delete_patient(db=db, patient=existing_patient)
 
         

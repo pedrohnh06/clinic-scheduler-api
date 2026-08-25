@@ -40,10 +40,12 @@ class AppointmentService:
 
     def get_all_appointment(
         self,
-        db: Session
+        db: Session,
+        nutritionist_id=None,
+        patient_id=None
     ):
 
-        search = self.appointment_repository.get_all(db)
+        search = self.appointment_repository.get_all(db, nutritionist_id, patient_id)
 
         return search
     

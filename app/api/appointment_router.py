@@ -1,3 +1,4 @@
+from typing import Optional
 from app.services.appointment_service import AppointmentService
 from app.database.session import get_db
 from fastapi import APIRouter, Depends
@@ -22,11 +23,16 @@ def create_appointment(
 @router.get("/", response_model = list[AppointmentResponse])
 def appointment_get_all(
     db: Session = Depends(get_db),
-    logged_user = Depends(get_current_user)
+    logged_user = Depends(get_current_user),
+    nutritionist_id: Optional[int] = None,
+    patient_id: Optional[int] = None
 ):
 
     appointment_service = AppointmentService()
-    appointment_get = appointment_service.get_all_appointment(db=db)
+    appointment_get = appointment_service.get_all_appointment(
+        db=db,
+        nutritionist_id=nutritionist_id,
+        patient_id=patient_id)
     return appointment_get
 
 @router.put("/{appointment_id}", response_model = AppointmentResponse)
@@ -48,7 +54,7 @@ def appointment_update(
 def appointment_delete(
     appointment_id: int,
     db: Session = Depends(get_db),
-    logged_user = Depends(get_current_user)
+    logged_user = Depends(get_current_user),
 ):
 
     appointment_service = AppointmentService()

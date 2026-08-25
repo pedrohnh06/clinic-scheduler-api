@@ -42,9 +42,19 @@ class AppointmentRepository:
             
         return existing_schedule
     
-    def get_all(self, db: Session):
+    def get_all(
+        self,
+        db: Session,
+        nutritionist_id=None,
+        patient_id=None):
 
-        return db.query(Appointment).all()
+        query = db.query(Appointment)
+        if nutritionist_id is not None: 
+            query = query.filter(Appointment.nutritionist_id == nutritionist_id)
+        if patient_id is not None:
+            query = query.filter(Appointment.patient_id == patient_id)
+
+        return query.all()
 
     def get_by_id(
         self,

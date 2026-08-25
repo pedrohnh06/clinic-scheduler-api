@@ -11,8 +11,8 @@ class AppointmentCreate(BaseModel):
 
 class AppointmentResponse(BaseModel):
     start_time: datetime
-    patient_id: int
-    nutritionist_id: int
+    patient_id: Optional[int] = None
+    nutritionist_id: Optional[int] = None
     status: AppointmentStatus = AppointmentStatus.BOOKED
     id: int
     class Config:

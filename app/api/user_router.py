@@ -1,4 +1,4 @@
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_current_profile
 from fastapi import APIRouter, Depends
 from app.schemas.user import UserResponse, UserCreate
 from app.services.user_service import UserService
@@ -17,6 +17,6 @@ def create_user(data_user: UserCreate,
     return new_user
 
 @router.get("/me")
-def get_me(current_user = Depends(get_current_user)):
+def get_me(current_profile = Depends(get_current_profile)):
    
-   return current_user
+   return current_profile

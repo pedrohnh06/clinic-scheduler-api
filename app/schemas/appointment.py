@@ -4,7 +4,7 @@ from datetime import datetime
 from app.models.appointment import AppointmentStatus
 
 class AppointmentCreate(BaseModel):
-    patient_id: int
+    patient_id: Optional[int] = None
     nutritionist_id: int
     start_time: datetime
     status: AppointmentStatus = AppointmentStatus.BOOKED

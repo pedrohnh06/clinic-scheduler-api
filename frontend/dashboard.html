@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NutriClinic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .dashboard-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background-color: var(--bg-card); border-right: 1px solid var(--border-color); padding: 2rem 1rem; }
+        .sidebar-menu { list-style: none; margin-top: 2rem; }
+        .sidebar-menu li { margin-bottom: 0.5rem; }
+        .sidebar-menu a { display: block; padding: 0.75rem 1rem; border-radius: 8px; color: var(--text-muted); transition: all 0.2s; cursor: pointer; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: var(--secondary); color: var(--primary-hover); }
+        .main-content { flex: 1; padding: 2rem 3rem; background-color: var(--bg-color); }
+        .view-section { display: none; animation: fadeIn 0.3s; }
+        .view-section.active { display: block; }
+        .agenda-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
+        .agenda-slot { border: 1px solid var(--border-color); border-radius: 12px; padding: 0.75rem; text-align: center; transition: all 0.2s; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.35rem; }
+        .agenda-slot.slot-livre { background-color: #f0fdf4; border-color: #bbf7d0; }
+        .agenda-slot.slot-livre .slot-hora { color: var(--success); }
+        .agenda-slot.slot-livre .slot-status { color: var(--success); opacity: 0.7; font-size: 0.75rem; }
+        .agenda-slot.slot-booked { background-color: var(--secondary); border-color: var(--primary); border-left: 4px solid var(--primary); }
+        .agenda-slot.slot-booked .slot-hora { color: var(--primary-hover); }
+        .agenda-slot.slot-booked .slot-status { color: var(--primary-hover); font-size: 0.75rem; font-weight: 600; }
+        .agenda-slot.slot-blocked { background-color: #fee2e2; border-color: #fca5a5; border-left: 4px solid var(--error); }
+        .agenda-slot.slot-blocked .slot-hora { color: var(--error); }
+        .agenda-slot.slot-blocked .slot-status { color: var(--error); font-size: 0.75rem; font-weight: 600; }
+        .slot-hora { font-weight: 700; font-size: 1rem; }
+        .slot-status { font-size: 0.8rem; }
+        .slot-cancel-btn { font-size: 0.65rem; padding: 0.2rem 0.5rem; margin-top: 0.2rem; border-radius: 12px; cursor: pointer; background: transparent; color: var(--error); border: 1px solid var(--error); transition: all 0.2s; }
+        .slot-cancel-btn:hover { background: var(--error); color: white; }
+        .day-nav { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+        .day-nav-btn { background: var(--secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 1.1rem; color: var(--primary); transition: all 0.2s; }
+        .day-nav-btn:hover { background: var(--primary); color: white; }
+        .day-nav-label { font-weight: 600; font-size: 1rem; color: var(--text-main); flex: 1; text-align: center; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+        .time-slot { border: 1px solid var(--border-color); padding: 0.6rem; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .time-slot:hover { background-color: var(--secondary); border-color: var(--primary); }
+        .time-slot.selected { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .time-slot.disabled { background-color: #f3f4f6; color: #9ca3af; cursor: not-allowed; border-color: #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">NutriClinic</h2>
+            <p id="user-role-badge" class="badge" style="background: #e0e7ff; color: #4338ca;">Carregando...</p>
+            <ul class="sidebar-menu">
+                <li><a class="nav-link active" onclick="showView('agenda')">Minha Agenda</a></li>
+                <li id="menu-agendar" style="display:none;"><a class="nav-link" onclick="showView('agendar')">Agendar Consulta</a></li>
+                <li id="menu-bloquear" style="display:none;"><a class="nav-link" onclick="showView('bloquear')">Bloquear Horario</a></li>
+                <li><a class="nav-link" onclick="logout()" style="color: var(--error);">Sair</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="view-agenda" class="view-section active">
+                <h3 style="margin-bottom: 1rem;">Minha Agenda</h3>
+                <div class="day-nav">
+                    <button class="day-nav-btn" onclick="changeAgendaDay(-1)">&#9664;</button>
+                    <span id="agenda-day-label" class="day-nav-label">Carregando...</span>
+                    <button class="day-nav-btn" onclick="changeAgendaDay(1)">&#9654;</button>
+                </div>
+                <div id="agenda-grid" class="agenda-grid"></div>
+            </section>
+            <section id="view-agendar" class="view-section">
+                <h3>Agendar Consulta</h3>
+                <p class="mb-4" style="color:var(--text-muted);">Selecione um profissional para ver os horarios.</p>
+                <div class="input-group">
+                    <label>Nutricionista</label>
+                    <select id="nutri-select" class="input-control" onchange="loadNutriSchedule()">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div id="schedule-picker" style="display:none;">
+                    <div class="input-group mt-4">
+                        <label>Escolha a Data</label>
+                        <input type="date" id="schedule-date" class="input-control" onchange="renderTimeSlots()">
+                    </div>
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Horarios Disponiveis (08:00 - 17:30)</label>
+                    <div id="time-slots" class="grid-4 mb-4"></div>
+                    <button class="btn" id="btn-confirm-agendamento" onclick="confirmarAgendamento()" disabled>Confirmar Agendamento</button>
+                </div>
+            </section>
+            <section id="view-bloquear" class="view-section">
+                <h3>Bloquear Horario</h3>
+                <p class="mb-4" style="color:var(--text-muted);">Bloqueie sua agenda para imprevistos ou folgas.</p>
+                <div class="input-group mt-4">
+                    <label>Data</label>
+                    <input type="date" id="block-date" class="input-control">
+                </div>
+                <div class="input-group">
+                    <label>Horario</label>
+                    <input type="time" id="block-time" class="input-control" step="1800">
+                </div>
+                <button class="btn" onclick="bloquearHorario()">Bloquear Agenda</button>
+            </section>
+        </main>
+    </div>
+    <script src="js/api.js?v=5"></script>
+    <script src="js/dashboard.js?v=5"></script>
+</body>
+</html>

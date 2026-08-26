@@ -31,8 +31,10 @@ def appointment_get_all(
         nutritionist_id = profile["profile_id"]
         patient_id = None
     else:
-        nutritionist_id = None
-        patient_id = profile["profile_id"]
+        if nutritionist_id is not None:
+            patient_id = None
+        else:
+            patient_id = profile["profile_id"]
 
     appointment_service = AppointmentService()
 

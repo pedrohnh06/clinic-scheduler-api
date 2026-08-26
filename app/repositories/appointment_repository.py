@@ -35,7 +35,7 @@ class AppointmentRepository:
         existing_schedule = db.query(
             Appointment
             ).filter(
-                Appointment.status == status.BOOKED,
+                Appointment.status == AppointmentStatus.BOOKED,
                 Appointment.start_time == start_time,
                 Appointment.nutritionist_id == nutritionist_id
                 ).first()

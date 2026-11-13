@@ -1,4 +1,30 @@
+# Ambientes virtuais
 .venv/
+venv/
+env/
+
+# Caches do Python
 __pycache__/
-*.pyc 
+*.py[cod]
+*$py.class
+
+# Bancos de dados locais (SQLite)
+*.db
+*.sqlite3
+
+# Arquivos sensíveis
 .env
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / SO
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Caso use Node/npm no frontend futuramente
+node_modules/
